@@ -60,3 +60,83 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 # webiots-interview-app
+
+1. Install the Shopify Package
+bash
+Copy
+Edit
+composer require kyon147/laravel-shopify
+2. Publish the Package Configuration
+bash
+Copy
+Edit
+php artisan vendor:publish --tag=shopify-config
+3. Define Shopify Environment Variables
+Update your .env file with the necessary Shopify credentials and app configuration.
+
+4. Setup Ngrok (for local development)
+Start Ngrok on port 8000:
+
+bash
+Copy
+Edit
+ngrok http 8000
+You will receive a secure https URL. For example:
+
+cpp
+Copy
+Edit
+https://2055-2405-201-200d-9200-5940-31d1-e3ca-6482.ngrok-free.app
+Use this URL to configure your environment:
+
+env
+Copy
+Edit
+APP_URL=https://2055-2405-201-200d-9200-5940-31d1-e3ca-6482.ngrok-free.app
+Also, update your Shopify app settings with this URL:
+
+Allowed redirection URL:
+https://2055-2405-201-200d-9200-5940-31d1-e3ca-6482.ngrok-free.app/authenticate
+
+5. Insert Subscription Plans
+Use a database seeder to insert your subscription plans.
+
+Then, apply the billable middleware to the home route to enforce plan selection:
+
+php
+Copy
+Edit
+Route::get('/', [HomeController::class, 'index'])->middleware('billable');
+6. Implement the Plan Selection Flow
+After authentication (from /authenticate/token), users should be redirected to a Choose Plan route.
+However, redirection to the plan selection view may not currently be working.
+
+On the plan selection view:
+
+Display available plans
+
+On plan selection, send a GraphQL recurring billing mutation to Shopify to initiate billing
+
+7. Render Products
+Create a view to display all Shopify products using the GraphQL Products API, with support for pagination.
+
+8. Add Product Functionality
+Implement an "Add Product" tab with a form to input:
+
+Title
+
+Description
+
+Image
+
+Quantity
+
+Variants (Size, Color, Price, Quantity)
+
+On form submission:
+
+Use AJAX to send the form data to the product/store route
+
+Store the product via Shopify's GraphQL API
+
+❗Note: Currently, the request fails due to CSRF token mismatch. Ensure the CSRF token is passed in your AJAX request headers to resolve this issue.
